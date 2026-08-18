@@ -3,18 +3,16 @@ version: 1.0.0
 main: me.stealablock.StealABlock
 api-version: '1.21'
 
-author: Akarar1146 
+author: Akarar1146
 description: Steal A Block gameplay plugin
 
 commands:
-
   sab:
     description: Main Steal A Block command
     usage: /sab
     permission: stealablock.admin
 
 permissions:
-
   stealablock.admin:
     description: Access to Steal A Block administration commands
     default: op
