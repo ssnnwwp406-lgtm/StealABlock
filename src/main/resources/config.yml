@@ -1,0 +1,106 @@
+# =====================================================
+#                  STEAL A BLOCK
+#                    MAIN CONFIG
+# =====================================================
+
+# =====================================================
+#                      PLUGIN
+# =====================================================
+
+plugin:
+
+  # Plugin language
+  # Available: ar, en
+  language: "ar"
+
+# =====================================================
+#                 ADMIN SETTINGS
+# =====================================================
+
+admin:
+
+  # Permission required for admin commands
+  permission: "stealablock.admin"
+
+  selection:
+
+    # Selection wand material
+    wand: "GOLDEN_AXE"
+
+    # Enable the selection system
+    enabled: true
+
+    # Cancel normal interaction with the wand
+    cancel-interaction: true
+
+# =====================================================
+#                     MESSAGES
+# =====================================================
+
+messages:
+
+  prefix: "&8[&bStealABlock&8] "
+
+  no-permission: "&cYou don't have permission to use this command."
+
+  player-only: "&cThis command can only be used by players."
+
+  wand-given: "&aYou received the selection wand!"
+
+  pos1-set: "&aPosition 1 has been set!"
+
+  pos2-set: "&aPosition 2 has been set!"
+
+  selection-complete: "&bSelection completed!"
+
+  selection-cleared: "&eYour selection has been cleared."
+
+  config-reloaded: "&aConfiguration has been reloaded!"
+
+# =====================================================
+#                    SELECTION
+# =====================================================
+
+selection:
+
+  # Maximum distance for selecting blocks
+  max-distance: 100
+
+  # Use the block the player is looking at
+  use-target-block: true
+
+  # Show coordinates after setting a position
+  show-location: true
+
+  # Show world name
+  show-world: true
+
+# =====================================================
+#                      DEBUG
+# =====================================================
+
+debug:
+
+  # Enable debug mode
+  enabled: false
+
+  # Log selection changes
+  log-selection: true
+
+  # Log commands
+  log-commands: true
+
+# =====================================================
+#                     SETTINGS
+# =====================================================
+
+settings:
+
+  # Save configuration when plugin shuts down
+  save-on-disable: true
+
+  # Enable automatic saving
+  auto-save: true
+
+  # Auto-save interval in seconds
+  auto-save-interval: 60
