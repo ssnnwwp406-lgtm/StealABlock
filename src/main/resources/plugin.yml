@@ -1,0 +1,18 @@
+name: StealABlock
+version: 1.0.0
+main: me.stealablock.StealABlock
+api-version: '1.21'
+
+author: YourName
+description: Steal a Block Minecraft Plugin
+
+commands:
+  sab:
+    description: Main StealABlock command
+    usage: /sab
+    permission: stealablock.admin
+
+permissions:
+  stealablock.admin:
+    description: Access to StealABlock admin commands
+    default: op
