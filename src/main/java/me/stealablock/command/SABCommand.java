@@ -1,6 +1,7 @@
 package me.stealablock.command;
 
 import me.stealablock.StealABlock;
+import me.stealablock.base.Base;
 import me.stealablock.selection.Selection;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,7 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SABCommand implements CommandExecutor, TabCompleter, Listener {
+public class SABCommand
+        implements CommandExecutor, TabCompleter, Listener {
 
     private final StealABlock plugin;
 
@@ -36,21 +38,17 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
         if (!(sender instanceof Player player)) {
 
             sender.sendMessage(
-                    color(
-                            plugin.getConfig().getString(
-                                    "messages.player-only",
-                                    "&cPlayers only."
-                            )
-                    )
+                    "This command can only be used by players."
             );
 
             return true;
         }
 
-        String permission = plugin.getConfig().getString(
-                "admin.permission",
-                "stealablock.admin"
-        );
+        String permission =
+                plugin.getConfig().getString(
+                        "admin.permission",
+                        "stealablock.admin"
+                );
 
         if (!player.hasPermission(permission)) {
 
@@ -80,6 +78,49 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
             case "clear" -> clearSelection(player);
 
             case "reload" -> reloadConfig(player);
+
+            case "setbase" -> {
+
+                if (args.length < 2) {
+
+                    player.sendMessage(
+                            color(
+                                    "&cUsage: /sab setbase <name>"
+                            )
+                    );
+
+                    return true;
+                }
+
+                setBase(
+                        player,
+                        args[1]
+                );
+            }
+
+            case "setspawn" -> {
+
+                if (args.length < 2) {
+
+                    player.sendMessage(
+                            color(
+                                    "&cUsage: /sab setspawn <base>"
+                            )
+                    );
+
+                    return true;
+                }
+
+                setSpawn(
+                        player,
+                        args[1]
+                );
+            }
+
+            case "base" -> handleBaseCommand(
+                    player,
+                    args
+            );
 
             default -> sendHelp(player);
         }
@@ -112,14 +153,386 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
         );
 
         player.sendMessage(
-                color("&e/sab clear &7- Clear your selection")
+                color("&e/sab setbase <name> &7- Create a base")
         );
 
         player.sendMessage(
-                color("&e/sab reload &7- Reload the configuration")
+                color("&e/sab setspawn <base> &7- Set block spawn")
+        );
+
+        player.sendMessage(
+                color("&e/sab base list &7- List all bases")
+        );
+
+        player.sendMessage(
+                color("&e/sab base info <name> &7- Base information")
+        );
+
+        player.sendMessage(
+                color("&e/sab base delete <name> &7- Delete a base")
+        );
+
+        player.sendMessage(
+                color("&e/sab clear &7- Clear selection")
+        );
+
+        player.sendMessage(
+                color("&e/sab reload &7- Reload config")
         );
 
         player.sendMessage("");
+    }
+
+    // =================================================
+    // SET BASE
+    // =================================================
+
+    private void setBase(
+            Player player,
+            String name
+    ) {
+
+        Selection selection =
+                plugin.getSelectionManager()
+                        .getSelection(player);
+
+        if (!selection.isComplete()) {
+
+            player.sendMessage(
+                    color(
+                            "&cYou must set both Pos1 and Pos2 first."
+                    )
+            );
+
+            return;
+        }
+
+        if (plugin.getBaseManager()
+                .getBase(name) != null) {
+
+            player.sendMessage(
+                    color(
+                            "&cA base with this name already exists."
+                    )
+            );
+
+            return;
+        }
+
+        boolean created =
+                plugin.getBaseManager()
+                        .createBase(
+                                name,
+                                selection.getPos1(),
+                                selection.getPos2()
+                        );
+
+        if (!created) {
+
+            player.sendMessage(
+                    color(
+                            "&cFailed to create the base."
+                    )
+            );
+
+            return;
+        }
+
+        player.sendMessage(
+                color(
+                        "&a✔ Base &e" +
+                                name +
+                                " &ahas been created!"
+                )
+        );
+
+        player.sendMessage(
+                color(
+                        "&7Now set its block spawn using:"
+                )
+        );
+
+        player.sendMessage(
+                color(
+                        "&e/sab setspawn " + name
+                )
+        );
+    }
+
+    // =================================================
+    // SET SPAWN
+    // =================================================
+
+    private void setSpawn(
+            Player player,
+            String baseName
+    ) {
+
+        Base base =
+                plugin.getBaseManager()
+                        .getBase(baseName);
+
+        if (base == null) {
+
+            player.sendMessage(
+                    color(
+                            "&cBase not found: &e"
+                                    + baseName
+                    )
+            );
+
+            return;
+        }
+
+        Location location =
+                player.getLocation();
+
+        boolean success =
+                plugin.getBaseManager()
+                        .setSpawn(
+                                baseName,
+                                location
+                        );
+
+        if (!success) {
+
+            player.sendMessage(
+                    color(
+                            "&cFailed to set spawn."
+                    )
+            );
+
+            return;
+        }
+
+        player.sendMessage(
+                color(
+                        "&a✔ Block spawn for base &e"
+                                + baseName
+                                + " &ahas been set!"
+                )
+        );
+
+        sendLocation(
+                player,
+                location
+        );
+    }
+
+    // =================================================
+    // BASE COMMAND
+    // =================================================
+
+    private void handleBaseCommand(
+            Player player,
+            String[] args
+    ) {
+
+        if (args.length < 2) {
+
+            player.sendMessage(
+                    color(
+                            "&cUsage: /sab base <list|info|delete>"
+                    )
+            );
+
+            return;
+        }
+
+        switch (args[1].toLowerCase()) {
+
+            case "list" -> listBases(player);
+
+            case "info" -> {
+
+                if (args.length < 3) {
+
+                    player.sendMessage(
+                            color(
+                                    "&cUsage: /sab base info <name>"
+                            )
+                    );
+
+                    return;
+                }
+
+                baseInfo(
+                        player,
+                        args[2]
+                );
+            }
+
+            case "delete" -> {
+
+                if (args.length < 3) {
+
+                    player.sendMessage(
+                            color(
+                                    "&cUsage: /sab base delete <name>"
+                            )
+                    );
+
+                    return;
+                }
+
+                deleteBase(
+                        player,
+                        args[2]
+                );
+            }
+
+            default -> player.sendMessage(
+                    color(
+                            "&cUnknown base command."
+                    )
+            );
+        }
+    }
+
+    // =================================================
+    // LIST BASES
+    // =================================================
+
+    private void listBases(Player player) {
+
+        player.sendMessage("");
+
+        player.sendMessage(
+                color("&b&lBases")
+        );
+
+        if (plugin.getBaseManager()
+                .getBases()
+                .isEmpty()) {
+
+            player.sendMessage(
+                    color("&7No bases have been created.")
+            );
+
+            player.sendMessage("");
+
+            return;
+        }
+
+        for (Base base :
+                plugin.getBaseManager().getBases()) {
+
+            String spawnStatus =
+                    base.hasSpawn()
+                            ? "&aSet"
+                            : "&cNot Set";
+
+            player.sendMessage(
+                    color(
+                            "&7- &e"
+                                    + base.getName()
+                                    + " &7| Spawn: "
+                                    + spawnStatus
+                    )
+            );
+        }
+
+        player.sendMessage("");
+    }
+
+    // =================================================
+    // BASE INFO
+    // =================================================
+
+    private void baseInfo(
+            Player player,
+            String name
+    ) {
+
+        Base base =
+                plugin.getBaseManager()
+                        .getBase(name);
+
+        if (base == null) {
+
+            player.sendMessage(
+                    color(
+                            "&cBase not found."
+                    )
+            );
+
+            return;
+        }
+
+        player.sendMessage("");
+
+        player.sendMessage(
+                color(
+                        "&b&lBase: &e"
+                                + base.getName()
+                )
+        );
+
+        player.sendMessage("");
+
+        player.sendMessage(
+                color(
+                        "&7Pos1: "
+                                + formatLocation(
+                                base.getPos1()
+                        )
+                )
+        );
+
+        player.sendMessage(
+                color(
+                        "&7Pos2: "
+                                + formatLocation(
+                                base.getPos2()
+                        )
+                )
+        );
+
+        player.sendMessage(
+                color(
+                        "&7Spawn: "
+                                + (base.hasSpawn()
+                                ? formatLocation(
+                                base.getSpawn()
+                        )
+                                : "&cNot Set")
+                )
+        );
+
+        player.sendMessage("");
+    }
+
+    // =================================================
+    // DELETE BASE
+    // =================================================
+
+    private void deleteBase(
+            Player player,
+            String name
+    ) {
+
+        boolean deleted =
+                plugin.getBaseManager()
+                        .deleteBase(name);
+
+        if (!deleted) {
+
+            player.sendMessage(
+                    color(
+                            "&cBase not found."
+                    )
+            );
+
+            return;
+        }
+
+        player.sendMessage(
+                color(
+                        "&a✔ Base &e"
+                                + name
+                                + " &ahas been deleted."
+                )
+        );
     }
 
     // =================================================
@@ -128,26 +541,36 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
 
     private void giveWand(Player player) {
 
-        Material material = getWandMaterial();
+        Material material =
+                getWandMaterial();
 
-        ItemStack wand = new ItemStack(material);
+        ItemStack wand =
+                new ItemStack(material);
 
-        ItemMeta meta = wand.getItemMeta();
+        ItemMeta meta =
+                wand.getItemMeta();
 
         if (meta != null) {
 
             meta.setDisplayName(
-                    color("&6&lStealABlock Wand")
+                    color(
+                            "&6&lStealABlock Wand"
+                    )
             );
 
-            List<String> lore = new ArrayList<>();
+            List<String> lore =
+                    new ArrayList<>();
 
             lore.add(
-                    color("&7Left Click &f→ &ePosition 1")
+                    color(
+                            "&7Left Click &f→ &ePos1"
+                    )
             );
 
             lore.add(
-                    color("&7Right Click &f→ &ePosition 2")
+                    color(
+                            "&7Right Click &f→ &ePos2"
+                    )
             );
 
             meta.setLore(lore);
@@ -155,7 +578,8 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
             wand.setItemMeta(meta);
         }
 
-        player.getInventory().addItem(wand);
+        player.getInventory()
+                .addItem(wand);
 
         sendMessage(
                 player,
@@ -169,7 +593,8 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
 
     private void setPos1(Player player) {
 
-        Location location = getSelectionLocation(player);
+        Location location =
+                getSelectionLocation(player);
 
         if (location == null) {
             return;
@@ -186,7 +611,10 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
                 "messages.pos1-set"
         );
 
-        sendLocation(player, location);
+        sendLocation(
+                player,
+                location
+        );
     }
 
     // =================================================
@@ -195,7 +623,8 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
 
     private void setPos2(Player player) {
 
-        Location location = getSelectionLocation(player);
+        Location location =
+                getSelectionLocation(player);
 
         if (location == null) {
             return;
@@ -212,7 +641,10 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
                 "messages.pos2-set"
         );
 
-        sendLocation(player, location);
+        sendLocation(
+                player,
+                location
+        );
 
         if (selection.isComplete()) {
 
@@ -257,111 +689,75 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
     // =================================================
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent event) {
+    public void onInteract(
+            PlayerInteractEvent event
+    ) {
 
-        Player player = event.getPlayer();
+        Player player =
+                event.getPlayer();
 
-        if (!player.hasPermission(
+        String permission =
                 plugin.getConfig().getString(
                         "admin.permission",
                         "stealablock.admin"
-                )
-        )) {
+                );
+
+        if (!player.hasPermission(permission)) {
             return;
         }
 
-        if (!plugin.getConfig().getBoolean(
-                "admin.selection.enabled",
-                true
-        )) {
+        if (!plugin.getConfig()
+                .getBoolean(
+                        "admin.selection.enabled",
+                        true
+                )) {
             return;
         }
 
-        ItemStack item = event.getItem();
+        ItemStack item =
+                event.getItem();
 
         if (item == null) {
             return;
         }
 
-        Material wandMaterial = getWandMaterial();
-
-        if (item.getType() != wandMaterial) {
+        if (item.getType()
+                != getWandMaterial()) {
             return;
         }
 
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta =
+                item.getItemMeta();
 
-        if (meta == null || !meta.hasDisplayName()) {
+        if (meta == null ||
+                !meta.hasDisplayName()) {
             return;
         }
 
-        String expectedName =
-                color("&6&lStealABlock Wand");
-
-        if (!meta.getDisplayName().equals(expectedName)) {
+        if (!meta.getDisplayName()
+                .equals(
+                        color(
+                                "&6&lStealABlock Wand"
+                        )
+                )) {
             return;
         }
 
-        Action action = event.getAction();
+        Action action =
+                event.getAction();
 
-        if (action == Action.LEFT_CLICK_BLOCK) {
+        if (action ==
+                Action.LEFT_CLICK_BLOCK) {
 
-            Location location =
-                    getSelectionLocation(player);
-
-            if (location != null) {
-
-                Selection selection =
-                        plugin.getSelectionManager()
-                                .getSelection(player);
-
-                selection.setPos1(location);
-
-                sendMessage(
-                        player,
-                        "messages.pos1-set"
-                );
-
-                sendLocation(
-                        player,
-                        location
-                );
-            }
+            setPos1(player);
 
             cancelInteraction(event);
         }
 
-        else if (action == Action.RIGHT_CLICK_BLOCK) {
+        else if (action ==
+                Action.RIGHT_CLICK_BLOCK) {
 
-            Location location =
-                    getSelectionLocation(player);
-
-            if (location != null) {
-
-                Selection selection =
-                        plugin.getSelectionManager()
-                                .getSelection(player);
-
-                selection.setPos2(location);
-
-                sendMessage(
-                        player,
-                        "messages.pos2-set"
-                );
-
-                sendLocation(
-                        player,
-                        location
-                );
-
-                if (selection.isComplete()) {
-
-                    sendMessage(
-                            player,
-                            "messages.selection-complete"
-                    );
-                }
-            }
+            setPos2(player);
 
             cancelInteraction(event);
         }
@@ -371,19 +767,23 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
     // LOCATION
     // =================================================
 
-    private Location getSelectionLocation(Player player) {
+    private Location getSelectionLocation(
+            Player player
+    ) {
 
         boolean useTarget =
-                plugin.getConfig().getBoolean(
-                        "selection.use-target-block",
-                        true
-                );
+                plugin.getConfig()
+                        .getBoolean(
+                                "selection.use-target-block",
+                                true
+                        );
 
         int maxDistance =
-                plugin.getConfig().getInt(
-                        "selection.max-distance",
-                        100
-                );
+                plugin.getConfig()
+                        .getInt(
+                                "selection.max-distance",
+                                100
+                        );
 
         if (useTarget) {
 
@@ -406,7 +806,9 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
             return block.getLocation();
         }
 
-        return player.getLocation().getBlock().getLocation();
+        return player.getLocation()
+                .getBlock()
+                .getLocation();
     }
 
     // =================================================
@@ -418,32 +820,58 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
             Location location
     ) {
 
-        if (plugin.getConfig().getBoolean(
-                "selection.show-location",
-                true
-        )) {
+        if (plugin.getConfig()
+                .getBoolean(
+                        "selection.show-location",
+                        true
+                )) {
 
             player.sendMessage(
                     color(
-                            "&7X: &f" + location.getBlockX()
-                                    + " &7Y: &f" + location.getBlockY()
-                                    + " &7Z: &f" + location.getBlockZ()
+                            "&7X: &f"
+                                    + location.getBlockX()
+                                    + " &7Y: &f"
+                                    + location.getBlockY()
+                                    + " &7Z: &f"
+                                    + location.getBlockZ()
                     )
             );
         }
 
-        if (plugin.getConfig().getBoolean(
-                "selection.show-world",
-                true
-        )) {
+        if (plugin.getConfig()
+                .getBoolean(
+                        "selection.show-world",
+                        true
+                )) {
 
             player.sendMessage(
                     color(
                             "&7World: &f"
-                                    + location.getWorld().getName()
+                                    + location.getWorld()
+                                    .getName()
                     )
             );
         }
+    }
+
+    // =================================================
+    // FORMAT LOCATION
+    // =================================================
+
+    private String formatLocation(
+            Location location
+    ) {
+
+        if (location == null) {
+            return "&cNone";
+        }
+
+        return "&f"
+                + location.getBlockX()
+                + ", "
+                + location.getBlockY()
+                + ", "
+                + location.getBlockZ();
     }
 
     // =================================================
@@ -453,10 +881,11 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
     private Material getWandMaterial() {
 
         String materialName =
-                plugin.getConfig().getString(
-                        "admin.selection.wand",
-                        "GOLDEN_AXE"
-                );
+                plugin.getConfig()
+                        .getString(
+                                "admin.selection.wand",
+                                "GOLDEN_AXE"
+                        );
 
         try {
 
@@ -465,11 +894,6 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
             );
 
         } catch (IllegalArgumentException exception) {
-
-            plugin.getLogger().warning(
-                    "Invalid wand material: "
-                            + materialName
-            );
 
             return Material.GOLDEN_AXE;
         }
@@ -483,10 +907,11 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
             PlayerInteractEvent event
     ) {
 
-        if (plugin.getConfig().getBoolean(
-                "admin.selection.cancel-interaction",
-                true
-        )) {
+        if (plugin.getConfig()
+                .getBoolean(
+                        "admin.selection.cancel-interaction",
+                        true
+                )) {
 
             event.setCancelled(true);
         }
@@ -502,19 +927,23 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
     ) {
 
         String prefix =
-                plugin.getConfig().getString(
-                        "messages.prefix",
-                        ""
-                );
+                plugin.getConfig()
+                        .getString(
+                                "messages.prefix",
+                                ""
+                        );
 
         String message =
-                plugin.getConfig().getString(
-                        path,
-                        "&cMessage not found."
-                );
+                plugin.getConfig()
+                        .getString(
+                                path,
+                                "&cMessage not found."
+                        );
 
         player.sendMessage(
-                color(prefix + message)
+                color(
+                        prefix + message
+                )
         );
     }
 
@@ -524,14 +953,11 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
 
     private String color(String text) {
 
-        if (text == null) {
-            return "";
-        }
-
-        return ChatColor.translateAlternateColorCodes(
-                '&',
-                text
-        );
+        return ChatColor
+                .translateAlternateColorCodes(
+                        '&',
+                        text
+                );
     }
 
     // =================================================
@@ -552,11 +978,68 @@ public class SABCommand implements CommandExecutor, TabCompleter, Listener {
                     "wand",
                     "pos1",
                     "pos2",
+                    "setbase",
+                    "setspawn",
+                    "base",
                     "clear",
                     "reload"
             );
         }
 
+        if (args.length == 2) {
+
+            if (args[0].equalsIgnoreCase(
+                    "base"
+            )) {
+
+                return List.of(
+                        "list",
+                        "info",
+                        "delete"
+                );
+            }
+
+            if (args[0].equalsIgnoreCase(
+                    "setspawn"
+            )) {
+
+                return plugin.getBaseManager()
+                        .getBases()
+                        .stream()
+                        .map(Base::getName)
+                        .toList();
+            }
+
+            if (args[0].equalsIgnoreCase(
+                    "setbase"
+            )) {
+
+                return List.of(
+                        "<name>"
+                );
+            }
+        }
+
+        if (args.length == 3 &&
+                args[0].equalsIgnoreCase(
+                        "base"
+                )) {
+
+            if (args[1].equalsIgnoreCase(
+                    "info"
+            ) ||
+                    args[1].equalsIgnoreCase(
+                            "delete"
+                    )) {
+
+                return plugin.getBaseManager()
+                        .getBases()
+                        .stream()
+                        .map(Base::getName)
+                        .toList();
+            }
+        }
+
         return List.of();
     }
-              }
+            }
