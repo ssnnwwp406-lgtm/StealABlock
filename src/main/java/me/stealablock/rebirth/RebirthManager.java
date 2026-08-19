@@ -1,130 +1,99 @@
 package me.stealablock.rebirth;
 
 import me.stealablock.StealABlock;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 public class RebirthManager {
 
+    private static final int MAX_REBIRTH = 40;
+
     private final StealABlock plugin;
 
-    private final File file;
-
-    private final YamlConfiguration data;
-
-    public RebirthManager(
-            StealABlock plugin
-    ) {
-
+    public RebirthManager(StealABlock plugin) {
         this.plugin = plugin;
-
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdirs();
-        }
-
-        file = new File(
-                plugin.getDataFolder(),
-                "rebirths.yml"
-        );
-
-        data =
-                YamlConfiguration
-                        .loadConfiguration(file);
     }
 
-    // =========================
-    // GET REBIRTH
-    // =========================
-
     public int getRebirth(Player player) {
-
         return getRebirth(
                 player.getUniqueId()
         );
     }
 
     public int getRebirth(UUID uuid) {
-
-        return data.getInt(
-                "players."
-                        + uuid
-                        + ".rebirth",
-                0
-        );
+        return plugin.getPlayerDataManager()
+                .getRebirth(uuid);
     }
 
-    // =========================
-    // SET REBIRTH
-    // =========================
+    public boolean canRebirth(Player player) {
+
+        return getRebirth(player)
+                < MAX_REBIRTH;
+    }
+
+    public boolean addRebirth(Player player) {
+
+        int current =
+                getRebirth(player);
+
+        if (current >= MAX_REBIRTH) {
+            return false;
+        }
+
+        plugin.getPlayerDataManager()
+                .setRebirth(
+                        player.getUniqueId(),
+                        current + 1
+                );
+
+        return true;
+    }
 
     public void setRebirth(
             Player player,
             int amount
     ) {
 
-        setRebirth(
-                player.getUniqueId(),
-                amount
-        );
+        plugin.getPlayerDataManager()
+                .setRebirth(
+                        player.getUniqueId(),
+                        amount
+                );
     }
 
-    public void setRebirth(
-            UUID uuid,
-            int amount
-    ) {
-
-        if (amount < 0) {
-            amount = 0;
-        }
-
-        data.set(
-                "players."
-                        + uuid
-                        + ".rebirth",
-                amount
-        );
-
-        save();
+    public int getMaxRebirth() {
+        return MAX_REBIRTH;
     }
 
-    // =========================
-    // ADD REBIRTH
-    // =========================
+    public int getBaseLockTime(Player player) {
 
-    public void addRebirth(
+        int defaultTime =
+                plugin.getConfig()
+                        .getInt(
+                                "rebirth.base-lock.default-time",
+                                60
+                        );
+
+        int bonus =
+                plugin.getConfig()
+                        .getInt(
+                                "rebirth.base-lock.bonus-per-rebirth",
+                                20
+                        );
+
+        return defaultTime
+                + (getRebirth(player) * bonus);
+    }
+
+    public double getIncomeMultiplier(
             Player player
     ) {
 
-        int current =
+        int rebirth =
                 getRebirth(player);
 
-        setRebirth(
-                player,
-                current + 1
-        );
-    }
-
-    // =========================
-    // SAVE
-    // =========================
-
-    public void save() {
-
-        try {
-
-            data.save(file);
-
-        } catch (IOException exception) {
-
-            plugin.getLogger().severe(
-                    "Could not save rebirths.yml!"
-            );
-
-            exception.printStackTrace();
-        }
+        return 1.0
+                + (rebirth * 0.5);
     }
 }
