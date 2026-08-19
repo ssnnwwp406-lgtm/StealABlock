@@ -3,64 +3,96 @@
 #                    Main Configuration
 # ============================================================
 
+
 # ============================================================
 # GENERAL
 # ============================================================
 
 general:
 
-  # Plugin language
+  # Default language
   # Available: en, ar
   language: en
 
-  # Enable debug messages in console
+  # Enable debug messages
   debug: false
 
 
 # ============================================================
-# BASE SETTINGS
+# PLAYER DATA
+# ============================================================
+
+data:
+
+  # Automatically save player data
+  auto-save: true
+
+  # Auto-save interval in minutes
+  auto-save-interval: 5
+
+  # Save when player quits
+  save-on-quit: true
+
+  # Save when server shuts down
+  save-on-shutdown: true
+
+  # File used for player data
+  file: players.yml
+
+
+# ============================================================
+# BASE
 # ============================================================
 
 base:
 
-  # Amount of slots at Prestige 0
+  # Starting slots
   starting-slots: 10
 
-  # Amount of slots added per Prestige
+  # Slots added per Prestige
   slots-per-prestige: 10
 
-  # Floors at Prestige 0
+  # Starting floors
   starting-floors: 1
 
   # Floors added per Prestige
   floors-per-prestige: 1
 
+  # Automatically assign a free base
+  auto-assign: true
 
-  # ----------------------------------------------------------
-  # BASE LOCK
-  # ----------------------------------------------------------
+  # Teleport player to their base when joining
+  teleport-on-join: true
 
-  lock:
 
-    # Base open time at Rebirth 0
-    # Unit: seconds
-    default-time: 60
+# ============================================================
+# BASE LOCK
+# ============================================================
 
-    # Extra open time for every Rebirth
-    # Example:
-    # Rebirth 0 = 60 seconds
-    # Rebirth 1 = 80 seconds
-    # Rebirth 2 = 100 seconds
-    rebirth-bonus: 20
+base-lock:
 
-    # Automatically lock the base when the timer ends
-    auto-lock: true
+  # Base is locked when the player joins
+  locked-on-join: true
 
-    # Can the owner manually lock the base?
-    manual-lock: true
+  # Base automatically locks after timer ends
+  auto-lock: true
 
-    # Can the owner manually open the base?
-    manual-open: true
+  # Allow owner to manually open the base
+  manual-open: true
+
+  # Allow owner to manually lock the base
+  manual-lock: true
+
+  # Base open time at Rebirth 0
+  # Seconds
+  default-time: 60
+
+  # Extra seconds for every Rebirth
+  rebirth-bonus-time: 20
+
+  # Maximum opening time
+  # Seconds
+  max-time: 3600
 
 
 # ============================================================
@@ -71,6 +103,18 @@ rebirth:
 
   # Starting Rebirth
   starting-level: 0
+
+  # Maximum Rebirth
+  max-level: 40
+
+  # Base lock bonus
+  base-lock:
+
+    # Rebirth 0 = 60 seconds
+    default-time: 60
+
+    # Every Rebirth adds 20 seconds
+    bonus-per-rebirth: 20
 
   # Income multiplier
   income-multiplier:
@@ -86,6 +130,36 @@ rebirth:
     8: 5.0
     9: 5.5
     10: 6.0
+    11: 6.5
+    12: 7.0
+    13: 7.5
+    14: 8.0
+    15: 8.5
+    16: 9.0
+    17: 9.5
+    18: 10.0
+    19: 10.5
+    20: 11.0
+    21: 11.5
+    22: 12.0
+    23: 12.5
+    24: 13.0
+    25: 13.5
+    26: 14.0
+    27: 14.5
+    28: 15.0
+    29: 15.5
+    30: 16.0
+    31: 16.5
+    32: 17.0
+    33: 17.5
+    34: 18.0
+    35: 18.5
+    36: 19.0
+    37: 19.5
+    38: 20.0
+    39: 20.5
+    40: 21.0
 
 
 # ============================================================
@@ -103,103 +177,33 @@ prestige:
   # Floors added every Prestige
   floors-per-level: 1
 
+  # Prestige 0 = 10 Slots / 1 Floor
+  # Prestige 1 = 20 Slots / 2 Floors
+  # Prestige 2 = 30 Slots / 3 Floors
+
 
 # ============================================================
-# BLOCK SPAWNER
+# CONVEYOR
 # ============================================================
 
-block-spawner:
+conveyor:
 
-  # Enable automatic block spawning
   enabled: true
 
-  # Spawn blocks at every registered Base
-  spawn-at-all-bases: true
+  # Conveyor speed
+  # Blocks per second
+  speed: 2.0
 
-  # Remove blocks when the plugin/server shuts down
-  remove-on-shutdown: false
+  # Maximum blocks on conveyor
+  max-blocks: 30
 
-  # Maximum amount of spawned blocks per Base
-  max-blocks-per-base: 50
+  # Remove block when it reaches the end
+  remove-at-end: true
 
+  # Allow players to buy blocks
+  buying: true
 
-# ============================================================
-# RARITY SPAWN TIMES
-# ============================================================
+  # Allow players to interact with blocks
+  interaction: true
 
-rarities:
-
-  common:
-
-    enabled: true
-
-    # Spawn interval
-    # Unit: seconds
-    interval: 5
-
-
-  uncommon:
-
-    enabled: true
-
-    interval: 10
-
-
-  rare:
-
-    enabled: true
-
-    interval: 20
-
-
-  epic:
-
-    enabled: true
-
-    # 8 minutes
-    interval: 480
-
-
-  legendary:
-
-    enabled: true
-
-    # 15 minutes
-    interval: 900
-
-
-  mythic:
-
-    enabled: true
-
-    # 30 minutes
-    interval: 1800
-
-
-  divine:
-
-    enabled: true
-
-    # 1 hour 30 minutes
-    interval: 5400
-
-
-  secret:
-
-    enabled: true
-
-    # 3 hours
-    interval: 10800
-
-
-# ============================================================
-# BLOCK SETTINGS
-# ============================================================
-
-blocks:
-
-  # Allow blocks to be sold
-  selling: true
-
-  # Allow blocks to be merged
-  merging: true
+  # Spawn point is controlled
