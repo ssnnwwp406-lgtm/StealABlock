@@ -3,7 +3,7 @@ version: 1.0.0
 main: me.stealablock.StealABlock
 api-version: '1.21'
 
-author: Akarar1146
+author: YourName
 description: Steal A Block gameplay plugin
 
 commands:
