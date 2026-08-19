@@ -206,4 +206,715 @@ conveyor:
   # Allow players to interact with blocks
   interaction: true
 
-  # Spawn point is controlled
+  # Spawn point is controlled using /sab setspawn
+  use-setspawn: true
+
+  # End point is controlled using /sab setend
+  use-setend: true
+
+
+# ============================================================
+# RARITIES
+# ============================================================
+
+rarities:
+
+  common:
+
+    enabled: true
+
+    # 5 seconds
+    interval: 5
+
+    display-name: "&fCommon"
+
+
+  uncommon:
+
+    enabled: true
+
+    # 10 seconds
+    interval: 10
+
+    display-name: "&aUncommon"
+
+
+  rare:
+
+    enabled: true
+
+    # 20 seconds
+    interval: 20
+
+    display-name: "&9Rare"
+
+
+  epic:
+
+    enabled: true
+
+    # 8 minutes
+    interval: 480
+
+    display-name: "&5Epic"
+
+
+  legendary:
+
+    enabled: true
+
+    # 15 minutes
+    interval: 900
+
+    display-name: "&6Legendary"
+
+
+  mythic:
+
+    enabled: true
+
+    # 30 minutes
+    interval: 1800
+
+    display-name: "&cMythic"
+
+
+  divine:
+
+    enabled: true
+
+    # 1 hour 30 minutes
+    interval: 5400
+
+    display-name: "&bDivine"
+
+
+  secret:
+
+    enabled: true
+
+    # 3 hours
+    interval: 10800
+
+    display-name: "&dSecret"
+
+
+# ============================================================
+# BLOCKS
+# ============================================================
+
+blocks:
+
+  # Allow players to buy blocks
+  buying: true
+
+  # Allow players to sell blocks
+  selling: true
+
+  # Allow block merging
+  merging: true
+
+  # Allow moving blocks
+  moving: true
+
+  # Allow stealing
+  stealing: true
+
+  # Maximum merge level
+  max-level: 100
+
+  # If base is full
+  full-base:
+
+    # Give sell value instead
+    give-sell-value: true
+
+
+# ============================================================
+# BLOCK DISPLAY
+# ============================================================
+
+block-display:
+
+  enabled: true
+
+  # Display text inside/on the block
+  show-name: true
+
+  show-rarity: true
+
+  show-buy-price: true
+
+  show-sell-price: true
+
+  show-income: true
+
+  show-level: true
+
+  # Hide default Minecraft entity name
+  hide-vanilla-name: true
+
+
+# ============================================================
+# BLOCK INCOME
+# ============================================================
+
+income:
+
+  enabled: true
+
+  # Income calculation interval
+  # Seconds
+  interval: 1
+
+  # Apply Rebirth multiplier
+  rebirth-multiplier: true
+
+  # Apply Pet multiplier
+  pet-multiplier: true
+
+  # Store income until collected
+  bank-income: true
+
+  # Maximum stored income
+  max-stored: 1000000000
+
+
+# ============================================================
+# STARTER
+# ============================================================
+
+starter:
+
+  # Give starter items on first join
+  enabled: true
+
+  # Starter Pet Key
+  pet-key: true
+
+  pet-key-amount: 1
+
+  # Eye of Ender
+  eye-of-ender: true
+
+  eye-of-ender-amount: 1
+
+  # Give starter pet after opening the crate
+  starter-pet: true
+
+
+# ============================================================
+# EYE OF ENDER
+# ============================================================
+
+eye-of-ender:
+
+  enabled: true
+
+  material: ENDER_EYE
+
+  name: "&5&lSteal A Block Menu"
+
+  lore:
+
+    - "&7Right click to open the menu."
+
+  prevent-drop: true
+
+  prevent-move: true
+
+  right-click-opens-gui: true
+
+
+# ============================================================
+# PETS
+# ============================================================
+
+pets:
+
+  enabled: true
+
+  default-slots: 1
+
+  max-slots: 10
+
+  income-boost: true
+
+  rarities:
+
+    common: true
+    uncommon: true
+    rare: true
+    epic: true
+    legendary: true
+    mythic: true
+    divine: true
+    secret: true
+
+
+# ============================================================
+# SHOP
+# ============================================================
+
+shop:
+
+  enabled: true
+
+  gui: true
+
+  blocks: true
+
+  pets: true
+
+  items: true
+
+  upgrades: true
+
+  special: true
+
+
+# ============================================================
+# INDEX
+# ============================================================
+
+index:
+
+  enabled: true
+
+  blocks: true
+
+  pets: true
+
+  rarities: true
+
+  show-progress: true
+
+
+# ============================================================
+# EVENTS
+# ============================================================
+
+events:
+
+  enabled: true
+
+  # Time between events
+  # Minutes
+  interval: 30
+
+  # Event duration
+  # Minutes
+  duration: 10
+
+  random: true
+
+  available:
+
+    zombie: true
+
+    blossom: true
+
+    money: true
+
+    lightning: true
+
+
+# ============================================================
+# ZOMBIE EVENT
+# ============================================================
+
+zombie-event:
+
+  enabled: true
+
+  amount: 30
+
+  block-on-head: true
+
+  allow-high-rarity: true
+
+  full-base-give-money: true
+
+
+# ============================================================
+# BLOSSOM EVENT
+# ============================================================
+
+blossom-event:
+
+  enabled: true
+
+  merged-blocks: true
+
+  min-level: 2
+
+  max-level: 5
+
+
+# ============================================================
+# MONEY EVENT
+# ============================================================
+
+money-event:
+
+  enabled: true
+
+  # Total money
+  total-money: 40000000
+
+  # Money per Emerald
+  money-per-emerald: 200000
+
+  # Emerald amount
+  emerald-amount: 200
+
+  material: EMERALD
+
+  # Event area
+  area-size: 40
+
+
+# ============================================================
+# LIGHTNING EVENT
+# ============================================================
+
+lightning-event:
+
+  enabled: true
+
+  # Number of blocks affected
+  affected-blocks: 5
+
+  # Lightning merges the block
+  merge-blocks: true
+
+  max-strikes: 5
+
+
+# ============================================================
+# GUI
+# ============================================================
+
+gui:
+
+  enabled: true
+
+  main-title: "&8&lSTEAL A BLOCK"
+
+  size: 54
+
+  blocks:
+
+    enabled: true
+    slot: 20
+
+  pets:
+
+    enabled: true
+    slot: 22
+
+  shop:
+
+    enabled: true
+    slot: 24
+
+  index:
+
+    enabled: true
+    slot: 29
+
+  rebirth:
+
+    enabled: true
+    slot: 31
+
+  prestige:
+
+    enabled: true
+    slot: 33
+
+  language:
+
+    enabled: true
+    slot: 40
+
+  settings:
+
+    enabled: true
+    slot: 42
+
+
+# ============================================================
+# LANGUAGE
+# ============================================================
+
+language:
+
+  default: en
+
+  available:
+
+    - en
+    - ar
+
+
+# ============================================================
+# SCOREBOARD
+# ============================================================
+
+scoreboard:
+
+  enabled: true
+
+  title: "&5&lSTEAL A BLOCK"
+
+  update-interval: 1
+
+  lines:
+
+    player: true
+
+    money: true
+
+    rebirth: true
+
+    prestige: true
+
+  format:
+
+    player: "&fPlayer: &d%player%"
+
+    money: "&fMoney: &a$%money%"
+
+    rebirth: "&fRebirth: &d%rebirth%&7/40"
+
+    prestige: "&fPrestige: &6%prestige%"
+
+
+# ============================================================
+# MONEY
+# ============================================================
+
+money:
+
+  starting-money: 0
+
+  currency-symbol: "$"
+
+  decimals: 0
+
+  # Allow negative money
+  allow-negative: false
+
+
+# ============================================================
+# STEAL
+# ============================================================
+
+steal:
+
+  enabled: true
+
+  # Only steal from unlocked bases
+  require-unlocked-base: true
+
+  # Prevent stealing from own base
+  own-base: false
+
+  # Cooldown between steals
+  cooldown: 5
+
+  # If thief base is full
+  full-base-give-sell-value: true
+
+
+# ============================================================
+# MERGE
+# ============================================================
+
+merge:
+
+  enabled: true
+
+  # Required amount of identical blocks
+  required-blocks: 2
+
+  # Same block only
+  same-block-only: true
+
+  # Same level only
+  same-level-only: true
+
+  # Maximum level
+  max-level: 100
+
+
+# ============================================================
+# MOVE
+# ============================================================
+
+move:
+
+  enabled: true
+
+  # Allow players to move blocks between slots
+  between-slots: true
+
+
+# ============================================================
+# PRESSURE PLATE / COLLECTION
+# ============================================================
+
+collection:
+
+  enabled: true
+
+  # Material of the collection plate
+  material: LIGHT_WEIGHTED_PRESSURE_PLATE
+
+  # Collect all stored income
+  collect-all: true
+
+  # Reset stored income after collection
+  reset-after-collect: true
+
+  # Anvil near the collection area
+  anvil-enabled: true
+
+
+# ============================================================
+# COMMANDS
+# ============================================================
+
+commands:
+
+  main: sab
+
+  aliases:
+
+    - stealablock
+    - stealblock
+
+
+# ============================================================
+# ADMIN SETUP
+# ============================================================
+
+setup:
+
+  # Base selection
+  pos1: true
+
+  pos2: true
+
+  # Base registration
+  setbase: true
+
+  # Conveyor spawn
+  setspawn: true
+
+  # Conveyor end
+  setend: true
+
+  # Base spawn
+  setbasespawn: true
+
+
+# ============================================================
+# PERFORMANCE
+# ============================================================
+
+performance:
+
+  async-saving: true
+
+  max-active-blocks: 500
+
+  # Update conveyor movement every tick
+  conveyor-ticks: 1
+
+
+# ============================================================
+# DEBUG
+# ============================================================
+
+debug:
+
+  enabled: false
+
+  log-block-spawns: false
+
+  log-conveyor: false
+
+  log-base-locks: false
+
+  log-rebirths: false
+
+  log-prestiges: false
+
+  log-events: false
+
+  log-purchases: false
+
+
+# ============================================================
+# MESSAGES
+# ============================================================
+
+messages:
+
+  prefix: "&8[&5Steal A Block&8] &r"
+
+  no-permission: "&cYou don't have permission to do this."
+
+  no-base: "&cYou don't have a base."
+
+  base-assigned: "&aYour base has been assigned!"
+
+  base-full: "&cYour base is full!"
+
+  base-locked: "&c🔒 This base is locked!"
+
+  base-opened: "&a🔓 Your base is now open!"
+
+  base-locked-again: "&c🔒 Your base has been locked!"
+
+  block-purchased: "&aYou purchased &f%block% &afor &e$%price%&a!"
+
+  not-enough-money: "&cYou don't have enough money!"
+
+  block-sold: "&aYou sold the block for &e$%price%&a."
+
+  block-merged: "&a🔥 Blocks merged successfully!"
+
+  block-moved: "&a🔄 Block moved successfully!"
+
+  block-stolen: "&a🕵️ You stole a block!"
+
+  cannot-steal: "&cYou cannot steal this block!"
+
+  rebirth-success: "&d🔄 Rebirth successful! &7(%rebirth%/40)"
+
+  max-rebirth: "&cYou have reached the maximum Rebirth: &e40&c."
+
+  prestige-success: "&6⭐ Prestige successful!"
+
+  event-started: "&e⚡ %event% &ehas started!"
+
+  event-ended: "&c⚡ %event% &chas ended!"
+
+  money-collected: "&a💰 You collected &e$%amount%&a!"
+
+  no-slot: "&cYou don't have an empty slot!"
+
+  setup-pos1: "&aPosition 1 set!"
+
+  setup-pos2: "&aPosition 2 set!"
+
+  setup-base: "&aBase created successfully!"
+
+  setup-spawn: "&aBlock spawn location set!"
+
+  setup-end: "&aConveyor end location set!"
+
+  setup-base-spawn: "&aBase spawn location set!"
