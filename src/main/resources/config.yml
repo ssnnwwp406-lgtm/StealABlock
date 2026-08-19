@@ -1,106 +1,205 @@
-# =====================================================
-#                  STEAL A BLOCK
-#                    MAIN CONFIG
-# =====================================================
+# ============================================================
+#                    STEAL A BLOCK
+#                    Main Configuration
+# ============================================================
 
-# =====================================================
-#                      PLUGIN
-# =====================================================
+# ============================================================
+# GENERAL
+# ============================================================
 
-plugin:
+general:
 
   # Plugin language
-  # Available: ar, en
-  language: "ar"
+  # Available: en, ar
+  language: en
 
-# =====================================================
-#                 ADMIN SETTINGS
-# =====================================================
+  # Enable debug messages in console
+  debug: false
 
-admin:
 
-  # Permission required for admin commands
-  permission: "stealablock.admin"
+# ============================================================
+# BASE SETTINGS
+# ============================================================
 
-  selection:
+base:
 
-    # Selection wand material
-    wand: "GOLDEN_AXE"
+  # Amount of slots at Prestige 0
+  starting-slots: 10
 
-    # Enable the selection system
+  # Amount of slots added per Prestige
+  slots-per-prestige: 10
+
+  # Floors at Prestige 0
+  starting-floors: 1
+
+  # Floors added per Prestige
+  floors-per-prestige: 1
+
+
+  # ----------------------------------------------------------
+  # BASE LOCK
+  # ----------------------------------------------------------
+
+  lock:
+
+    # Base open time at Rebirth 0
+    # Unit: seconds
+    default-time: 60
+
+    # Extra open time for every Rebirth
+    # Example:
+    # Rebirth 0 = 60 seconds
+    # Rebirth 1 = 80 seconds
+    # Rebirth 2 = 100 seconds
+    rebirth-bonus: 20
+
+    # Automatically lock the base when the timer ends
+    auto-lock: true
+
+    # Can the owner manually lock the base?
+    manual-lock: true
+
+    # Can the owner manually open the base?
+    manual-open: true
+
+
+# ============================================================
+# REBIRTH
+# ============================================================
+
+rebirth:
+
+  # Starting Rebirth
+  starting-level: 0
+
+  # Income multiplier
+  income-multiplier:
+
+    0: 1.0
+    1: 1.5
+    2: 2.0
+    3: 2.5
+    4: 3.0
+    5: 3.5
+    6: 4.0
+    7: 4.5
+    8: 5.0
+    9: 5.5
+    10: 6.0
+
+
+# ============================================================
+# PRESTIGE
+# ============================================================
+
+prestige:
+
+  # Starting Prestige
+  starting-level: 0
+
+  # Slots added every Prestige
+  slots-per-level: 10
+
+  # Floors added every Prestige
+  floors-per-level: 1
+
+
+# ============================================================
+# BLOCK SPAWNER
+# ============================================================
+
+block-spawner:
+
+  # Enable automatic block spawning
+  enabled: true
+
+  # Spawn blocks at every registered Base
+  spawn-at-all-bases: true
+
+  # Remove blocks when the plugin/server shuts down
+  remove-on-shutdown: false
+
+  # Maximum amount of spawned blocks per Base
+  max-blocks-per-base: 50
+
+
+# ============================================================
+# RARITY SPAWN TIMES
+# ============================================================
+
+rarities:
+
+  common:
+
     enabled: true
 
-    # Cancel normal interaction with the wand
-    cancel-interaction: true
+    # Spawn interval
+    # Unit: seconds
+    interval: 5
 
-# =====================================================
-#                     MESSAGES
-# =====================================================
 
-messages:
+  uncommon:
 
-  prefix: "&8[&bStealABlock&8] "
+    enabled: true
 
-  no-permission: "&cYou don't have permission to use this command."
+    interval: 10
 
-  player-only: "&cThis command can only be used by players."
 
-  wand-given: "&aYou received the selection wand!"
+  rare:
 
-  pos1-set: "&aPosition 1 has been set!"
+    enabled: true
 
-  pos2-set: "&aPosition 2 has been set!"
+    interval: 20
 
-  selection-complete: "&bSelection completed!"
 
-  selection-cleared: "&eYour selection has been cleared."
+  epic:
 
-  config-reloaded: "&aConfiguration has been reloaded!"
+    enabled: true
 
-# =====================================================
-#                    SELECTION
-# =====================================================
+    # 8 minutes
+    interval: 480
 
-selection:
 
-  # Maximum distance for selecting blocks
-  max-distance: 100
+  legendary:
 
-  # Use the block the player is looking at
-  use-target-block: true
+    enabled: true
 
-  # Show coordinates after setting a position
-  show-location: true
+    # 15 minutes
+    interval: 900
 
-  # Show world name
-  show-world: true
 
-# =====================================================
-#                      DEBUG
-# =====================================================
+  mythic:
 
-debug:
+    enabled: true
 
-  # Enable debug mode
-  enabled: false
+    # 30 minutes
+    interval: 1800
 
-  # Log selection changes
-  log-selection: true
 
-  # Log commands
-  log-commands: true
+  divine:
 
-# =====================================================
-#                     SETTINGS
-# =====================================================
+    enabled: true
 
-settings:
+    # 1 hour 30 minutes
+    interval: 5400
 
-  # Save configuration when plugin shuts down
-  save-on-disable: true
 
-  # Enable automatic saving
-  auto-save: true
+  secret:
 
-  # Auto-save interval in seconds
-  auto-save-interval: 60
+    enabled: true
+
+    # 3 hours
+    interval: 10800
+
+
+# ============================================================
+# BLOCK SETTINGS
+# ============================================================
+
+blocks:
+
+  # Allow blocks to be sold
+  selling: true
+
+  # Allow blocks to be merged
+  merging: true
