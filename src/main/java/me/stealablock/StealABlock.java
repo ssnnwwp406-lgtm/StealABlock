@@ -5,7 +5,12 @@ import me.stealablock.base.BaseManager;
 import me.stealablock.block.BlockManager;
 import me.stealablock.block.BlockSpawner;
 import me.stealablock.command.SABCommand;
+import me.stealablock.economy.MoneyManager;
+import me.stealablock.listener.PlayerJoinListener;
+import me.stealablock.player.PlayerDataManager;
+import me.stealablock.prestige.PrestigeManager;
 import me.stealablock.rebirth.RebirthManager;
+import me.stealablock.scoreboard.SABScoreboard;
 import me.stealablock.selection.SelectionManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,40 +23,50 @@ public class StealABlock extends JavaPlugin {
     private BlockManager blockManager;
     private BlockSpawner blockSpawner;
 
+    private PlayerDataManager playerDataManager;
+    private MoneyManager moneyManager;
     private RebirthManager rebirthManager;
+    private PrestigeManager prestigeManager;
+
+    private SABScoreboard scoreboard;
 
     @Override
     public void onEnable() {
 
         saveDefaultConfig();
 
-        // Selection
         selectionManager =
                 new SelectionManager();
 
-        // Bases
         baseManager =
                 new BaseManager(this);
 
-        // Rebirth
+        playerDataManager =
+                new PlayerDataManager(this);
+
+        moneyManager =
+                new MoneyManager(this);
+
         rebirthManager =
                 new RebirthManager(this);
 
-        // Base Lock
+        prestigeManager =
+                new PrestigeManager(this);
+
         baseLockManager =
                 new BaseLockManager(this);
 
-        // Blocks
         blockManager =
                 new BlockManager();
 
-        // Block Spawner
+        scoreboard =
+                new SABScoreboard(this);
+
         blockSpawner =
                 new BlockSpawner(this);
 
         blockSpawner.start();
 
-        // Command
         SABCommand sabCommand =
                 new SABCommand(this);
 
@@ -64,11 +79,17 @@ public class StealABlock extends JavaPlugin {
                     .setTabCompleter(sabCommand);
         }
 
-        // Events
         getServer()
                 .getPluginManager()
                 .registerEvents(
                         sabCommand,
+                        this
+                );
+
+        getServer()
+                .getPluginManager()
+                .registerEvents(
+                        new PlayerJoinListener(this),
                         this
                 );
 
@@ -84,19 +105,13 @@ public class StealABlock extends JavaPlugin {
             baseLockManager.shutdown();
         }
 
+        if (playerDataManager != null) {
+            playerDataManager.save();
+        }
+
         if (baseManager != null) {
             baseManager.save();
         }
-
-        if (rebirthManager != null) {
-            rebirthManager.save();
-        }
-
-        saveConfig();
-
-        getLogger().info(
-                "StealABlock disabled!"
-        );
     }
 
     public SelectionManager getSelectionManager() {
@@ -119,7 +134,23 @@ public class StealABlock extends JavaPlugin {
         return blockSpawner;
     }
 
+    public PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
+    }
+
+    public MoneyManager getMoneyManager() {
+        return moneyManager;
+    }
+
     public RebirthManager getRebirthManager() {
         return rebirthManager;
     }
-}
+
+    public PrestigeManager getPrestigeManager() {
+        return prestigeManager;
+    }
+
+    public SABScoreboard getScoreboard() {
+        return scoreboard;
+    }
+                               }
